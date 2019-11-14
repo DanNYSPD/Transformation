@@ -1,0 +1,18 @@
+{
+    "name": "xarenisoft/xml",
+    "description": "XmlModel",
+    "authors": [
+        {
+            "name": "Daniel Hernandez",
+            "email": "daniel.hernandez.job@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lindan\\Tranformation\\XmlModel": "src/"
+        }
+    }
+}
