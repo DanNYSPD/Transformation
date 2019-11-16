@@ -5,6 +5,7 @@ use DOMElement;
 use DOMDocument;
 /**
  * @author Daniel J Hdz <daniel.hernandez.job@gmail.com>
+ * 
  */
 class XmlModel {
     public $noAttributes=false;
@@ -17,7 +18,7 @@ class XmlModel {
      * @var DOMElement
      */
     protected $node;
-    public function __construct(?DOMDocument $xml=null, ?DOMElement $node=null){
+    public function __construct(?DOMElement $node=null){
         $this->node=$node;
     }
 
@@ -78,8 +79,7 @@ class XmlModel {
             }else{
                 #solo interesa el primero elemento.
                 $this->{$tagNameAndProperty} = new $ClassFQN();
-                $nodeList=  $this->node->getElementsByTagName($tagNameAndProperty);
-                $this->node->getElementsByTagName($tagNameAndProperty);
+                $nodeList=  $this->node->getElementsByTagName($tagNameAndProperty);                
                 if($nodeList->length>0){
                     $this->{$tagNameAndProperty}->node = $nodeList->item(0);
                     $this->{$tagNameAndProperty}->parseAttributes($nodeList->item(0));
