@@ -33,11 +33,21 @@ class XmlModel {
         }else{
             $attributes=$this->attributes;
         }
-        foreach ($attributes as $property) {
+        //note, when there is at least one element with associative key on an array, then the other elements became index based on elements
+        //with numeric index. 
+        // By the other hand, when we use a simple array with key=>$value expresion, $key is a numeric index, so the next code  applies for both cases
+        foreach ($attributes as $key =>$property) {
             if(\in_array($property,['attributes','noAttributes','children','node'])){
                 continue;
             }
-            $this->{$property} =$node->getAttribute($property);
+            //if the key is numeric use the $property as name for property and attribute
+            if(\is_numeric($key)){
+                $this->{$property} =$node->getAttribute($property);
+            }else{
+                //use the key  as attribute name
+                $this->{$property} =$node->getAttribute($key);
+            }
+           
         }
     }
     public function parseChildren(bool $deep=false){
@@ -77,7 +87,7 @@ class XmlModel {
                    }
                 return true;
             }else{
-                #solo interesa el primero elemento.
+                #We are just interested in the first element(child)
                 $this->{$tagNameAndProperty} = new $ClassFQN();
                 $nodeList=  $this->node->getElementsByTagName($tagNameAndProperty);                
                 if($nodeList->length>0){

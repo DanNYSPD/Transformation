@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <title>Forty What?</title>
+    <from>Joe</from>
+    <to>Jane</to>
+    <person name="Dan"   saü="loremtest" >
+    I know that's the answer -- but what's the question?
+    </person>
+    <car name="Faster"   model="0101" >
+            I know that's the answer -- but what's the question?
+            </car>
+</document>

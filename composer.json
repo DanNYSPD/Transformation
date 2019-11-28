@@ -15,5 +15,8 @@
         "psr-4": {
             "Lindan\\Tranformation\\XmlModel\\": "src/"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7"
     }
 }
