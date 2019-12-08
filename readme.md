@@ -1,6 +1,6 @@
 # Deserializer Xml to Php classes
 
-https://travis-ci.org/DanNYSPD/Transformation.svg?branch=master
+[![Build Status](https://travis-ci.org/DanNYSPD/Transformation.svg?branch=master)](https://travis-ci.org/DanNYSPD/Transformation)
 
 Xarenisoft XmlModel is a simple class that you can extend to deserialize and XML Tag and its attributes to a Php Class.
 
