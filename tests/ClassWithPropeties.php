@@ -2,7 +2,8 @@
  
 use PHPUnit\Framework\TestCase;
 use Lindan\Tranformation\XmlModel\XmlModel;
-class Person extends XmlModel{
+use Lindan\Tranformation\XmlModel\XmlModelSerializer;
+class Person extends XmlModelSerializer{
 
     public $attributes=[
         'name', #in this case property name is the same for the attribute
@@ -12,7 +13,7 @@ class Person extends XmlModel{
 
     public $hi;
 }
-class Car extends XmlModel{
+class Car extends XmlModelSerializer{
 
     public $attributes=[
         'name', #in this case property name is the same for the attribute
@@ -46,7 +47,7 @@ final class ClassWithPropeties extends TestCase {
         $person->parseAttributes($itemList->item(0)); 
         $this->assertEquals("Dan",$person->name);
         $this->assertEquals("loremtest",$person->hi);
-    
+        echo json_encode($person,JSON_PRETTY_PRINT);
     }
 
 }

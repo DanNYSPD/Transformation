@@ -3,6 +3,7 @@ namespace Lindan\Tranformation\XmlModel;
 
 use DOMElement;
 use DOMDocument;
+use RuntimeException;
 /**
  * @author Daniel J Hdz <daniel.hernandez.job@gmail.com>
  * 
@@ -82,6 +83,11 @@ class XmlModel {
                       $element->parseAttributes($node);
                       if($deep){
                         $element->parseChildren($deep);
+                      }
+                      if(!\is_array($this->{$propertyName})){
+                          #if the property isn't  initialized, initialize it as an array
+                          $this->{$propertyName}=[];
+                         #throw new RuntimeException("Propertie {$propertyName} is not an array in class ".get_class($this));
                       }
                       $this->{$propertyName}[]=$element;
                    }
