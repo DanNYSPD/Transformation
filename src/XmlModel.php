@@ -1,6 +1,8 @@
 <?php
 namespace Lindan\Tranformation\XmlModel;
 
+use DOMNode;
+use DOMXPath;
 use DOMElement;
 use DOMDocument;
 use RuntimeException;
@@ -22,7 +24,15 @@ class XmlModel {
     public function __construct(?DOMElement $node=null){
         $this->node=$node;
     }
-
+    /**
+     * Undocumented variable
+     *
+     * @var DOMXPath
+     */
+    public $_xpath=null;
+    public function setXpath(?DOMXPath $xpath){
+        $this->_xpath=$xpath;
+    }
     public function parseAttributes(DOMElement $node){
         if($this->noAttributes==true){
             return;
@@ -38,7 +48,7 @@ class XmlModel {
         //with numeric index. 
         // By the other hand, when we use a simple array with key=>$value expresion, $key is a numeric index, so the next code  applies for both cases
         foreach ($attributes as $key =>$property) {
-            if(\in_array($property,['attributes','noAttributes','children','node'])){
+            if(\in_array($property,['_xpath','attributes','noAttributes','children','node'])){
                 continue;
             }
             //if the key is numeric use the $property as name for property and attribute
@@ -50,6 +60,8 @@ class XmlModel {
             }
            
         }
+        //\var_dump($this->_xpath);
+        $this->parsedAttributes($node,$this->_xpath);
     }
     public function parseChildren(bool $deep=false){
         if(empty($this->children)||count($this->children)==0){
@@ -90,6 +102,7 @@ class XmlModel {
                          #throw new RuntimeException("Propertie {$propertyName} is not an array in class ".get_class($this));
                       }
                       $this->{$propertyName}[]=$element;
+                      $this->onEveryNode($node,$propertyName);//new function
                    }
                 return true;
             }else{
@@ -99,12 +112,27 @@ class XmlModel {
                 if($nodeList->length>0){
                     $this->{$tagNameAndProperty}->node = $nodeList->item(0);
                     $this->{$tagNameAndProperty}->parseAttributes($nodeList->item(0));
-                    $this->{$tagNameAndProperty}->parseChildren($deep);
+                    $this->{$tagNameAndProperty}->parseChildren($deep,$tagNameAndProperty);
+
+                    $this->onEveryNode($nodeList->item(0));//new function
                 }
                 
             }
            
         }
+        $this->parsedChildren($this->node);
+    }
+
+    public function onEveryNode(DOMElement $node,string $propertyName){
+        //this can be inhereted
+        
+    }
+
+    public function parsedAttributes(DOMElement $node,?DOMXPath $xpath){
+        //to implemnet in subclases
+    }
+    public function parsedChildren(DOMElement $node){
+
     }
 
 }
