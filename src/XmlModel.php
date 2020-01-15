@@ -40,10 +40,14 @@ class XmlModel {
             }
             //if the key is numeric use the $property as name for property and attribute
             if(\is_numeric($key)){
-                $object->{$property} =$node->getAttribute($property);
+                if($node->hasAttribute($property)){
+                    $object->{$property} =$node->getAttribute($property);
+                }
             }else{
                 //use the key  as attribute name
-                $object->{$property} =$node->getAttribute($key);
+                if($node->hasAttribute($key)){
+                    $object->{$property} =$node->getAttribute($key);
+                }
             }           
         }
     }
