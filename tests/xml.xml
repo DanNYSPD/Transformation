@@ -11,4 +11,13 @@
             </car>
             <house address="Street Av" number="10000" bedrooms="5">
             </house>
+
+            <pet name="rocky">
+                <characteristics random="o1">
+                    <characteristic name="Color" description="Brown">
+                    </characteristic>
+                       <characteristic name="Personality" description="relax">
+                    </characteristic>
+                </characteristics>
+            </pet>
 </document>

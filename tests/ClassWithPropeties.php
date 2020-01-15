@@ -47,7 +47,7 @@ final class ClassWithPropeties extends TestCase {
         $person->parseAttributes($itemList->item(0)); 
         $this->assertEquals("Dan",$person->name);
         $this->assertEquals("loremtest",$person->hi);
-        echo json_encode($person,JSON_PRETTY_PRINT);
+        #echo json_encode($person,JSON_PRETTY_PRINT);
     }
 
 }
