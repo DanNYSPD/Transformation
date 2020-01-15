@@ -19,5 +19,6 @@
                        <characteristic name="Personality" description="relax">
                     </characteristic>
                 </characteristics>
+                <race name="pitbull" />
             </pet>
 </document>

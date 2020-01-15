@@ -24,5 +24,19 @@ final class ChildrenTest extends TestCase {
         echo json_encode($pet->characteristics);
         echo json_encode($pet->characteristics->CharacteristicList);
     }
+    public function testWhenPropertyNameAndTagNameAreDifferentForSingleChild(){
+        $dom= new DOMDocument();
+        $dom->load(__DIR__.'/xml.xml');
+        $itemList=$dom->getElementsByTagName("pet");
 
+        $pet= new Pet($itemList->item(0));
+        $pet->parseAttributes($itemList->item(0));
+        $pet->parseChildren();
+
+        
+        $this->assertNotEmpty($pet->raceObj);
+        
+        #echo json_encode($pet);
+        
+    }
 }

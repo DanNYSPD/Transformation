@@ -1,5 +1,6 @@
 <?php
 
+use Race;
 use Lindan\Tranformation\XmlModel\XmlModel;
 use Lindan\Tranformation\XmlModel\XmlModelSerializer;
 
@@ -12,7 +13,8 @@ class Pet extends XmlModel{
     public $name;
 
     public $children=[
-        'characteristics'=>Characteristics::class
+        'characteristics'=>Characteristics::class,
+        'raceObj|race'=>Race::class,
     ];
     /**
      * Undocumented variable
@@ -20,4 +22,10 @@ class Pet extends XmlModel{
      * @var Characteristics
      */
     public $characteristics;
+    /**
+     * Undocumented variable
+     *
+     * @var Race
+     */
+    public $raceObj;
 }

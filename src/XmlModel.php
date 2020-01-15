@@ -109,14 +109,25 @@ class XmlModel {
                 #return true;
             }else{
                 #We are just interested in the first element(child)
-                $this->{$tagNameAndProperty} = new $ClassFQN();
-                $nodeList=  $this->node->getElementsByTagName($tagNameAndProperty);                
-                if($nodeList->length>0){
-                    $this->{$tagNameAndProperty}->node = $nodeList->item(0);
-                    $this->{$tagNameAndProperty}->parseAttributes($nodeList->item(0));
-                    $this->{$tagNameAndProperty}->parseChildren($deep,$tagNameAndProperty);
+                $tagName;
+                $propertyName;
+                if(($pos=\strpos($tagNameAndProperty,'|'))!==false){
+                    list($propertyName,$tagName)=explode('|',$tagNameAndProperty);
+                }else{
+                    $tagName=$tagNameAndProperty;
+                    $propertyName=$tagNameAndProperty;
+                }
+                
+                
 
-                    $this->onEveryNode($nodeList->item(0),$tagNameAndProperty);//new function
+                $this->{$propertyName} = new $ClassFQN();
+                $nodeList=  $this->node->getElementsByTagName($tagName);                
+                if($nodeList->length>0){
+                    $this->{$propertyName}->node = $nodeList->item(0);
+                    $this->{$propertyName}->parseAttributes($nodeList->item(0));
+                    $this->{$propertyName}->parseChildren($deep,$tagName);
+
+                    $this->onEveryNode($nodeList->item(0),$tagName);//new function
                 }
                 
             }
