@@ -9,6 +9,7 @@ class XmlModelSerializer extends XmlModel implements JsonSerializable{
     public function jsonSerialize() {
         $clean=[];
         $defaultHidden=['_xpath','_hidden','noAttributes','attributes','children','node','hideXmlAttribytes'];
+        #echo \var_dump($this->_hidden);
         $hidden=array_merge($defaultHidden,$this->_hidden);
         foreach ($this as $propertie => $value) {
             if($this->hideXmlAttribytes===true&& !\in_array($propertie,$hidden)){

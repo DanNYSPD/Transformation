@@ -35,7 +35,7 @@ class XmlModel {
     }
     public static function parseFromArray(DOMElement $node,$object, array $attributes){
         foreach ($attributes as $key =>$property) {
-            if(\in_array($property,['_xpath','attributes','noAttributes','children','node'])){
+            if(\in_array($property,['_hidden','_xpath','attributes','noAttributes','children','node'])){
                 continue;
             }
             //if the key is numeric use the $property as name for property and attribute
