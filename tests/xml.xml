@@ -9,4 +9,6 @@
     <car name="Faster"   model="0101" >
             I know that's the answer -- but what's the question?
             </car>
+            <house address="Street Av" number="10000" bedrooms="5">
+            </house>
 </document>
