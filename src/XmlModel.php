@@ -33,6 +33,20 @@ class XmlModel {
     public function setXpath(?DOMXPath $xpath){
         $this->_xpath=$xpath;
     }
+    public static function parseFromArray(DOMElement $node,$object, array $attributes){
+        foreach ($attributes as $key =>$property) {
+            if(\in_array($property,['_xpath','attributes','noAttributes','children','node'])){
+                continue;
+            }
+            //if the key is numeric use the $property as name for property and attribute
+            if(\is_numeric($key)){
+                $object->{$property} =$node->getAttribute($property);
+            }else{
+                //use the key  as attribute name
+                $object->{$property} =$node->getAttribute($key);
+            }           
+        }
+    }
     public function parseAttributes(DOMElement $node){
         if($this->noAttributes==true){
             return;
@@ -47,19 +61,7 @@ class XmlModel {
         //note, when there is at least one element with associative key on an array, then the other elements became index based on elements
         //with numeric index. 
         // By the other hand, when we use a simple array with key=>$value expresion, $key is a numeric index, so the next code  applies for both cases
-        foreach ($attributes as $key =>$property) {
-            if(\in_array($property,['_xpath','attributes','noAttributes','children','node'])){
-                continue;
-            }
-            //if the key is numeric use the $property as name for property and attribute
-            if(\is_numeric($key)){
-                $this->{$property} =$node->getAttribute($property);
-            }else{
-                //use the key  as attribute name
-                $this->{$property} =$node->getAttribute($key);
-            }
-           
-        }
+        self::parseFromArray($node,$this,$attributes);
         //\var_dump($this->_xpath);
         $this->parsedAttributes($node,$this->_xpath);
     }
@@ -68,7 +70,7 @@ class XmlModel {
             return false;
         }
         if(null==$this->node){
-            return false;
+            //return false;
         }
         foreach ($this->children as $tagNameAndProperty=>$ClassFQN) {
             //list($tagNameAndProperty,$ClassFQN)=$childDefinition;
@@ -80,7 +82,7 @@ class XmlModel {
                 #es un array
                 #obtenemos el nombre del tag (puede ser explicito despues de un| , o implicito, no coloclando nada y asumiendo que el nombre de la propiedad)
                 if($posPipe>0 &&($len=\strlen($tagNameAndProperty))!=$pos){
-                    $TagName=\substr($tagNameAndProperty,$posPipe+1,$len-$posPipe);
+                    $tagName=\substr($tagNameAndProperty,$posPipe+1,$len-$posPipe);
                     $propertyName=\substr($tagNameAndProperty,0,$pos);
                 }else{
                     $tagName=$tagNameAndProperty;
@@ -88,7 +90,7 @@ class XmlModel {
                 }
 
                
-                  $nodeList=  $this->node->getElementsByTagName($TagName);
+                  $nodeList=  $this->node->getElementsByTagName($tagName);
                    foreach ($nodeList as $node) {
                       $element=  new $ClassFQN();
                       $element->node=$node;
@@ -104,7 +106,7 @@ class XmlModel {
                       $this->{$propertyName}[]=$element;
                       $this->onEveryNode($node,$propertyName);//new function
                    }
-                return true;
+                #return true;
             }else{
                 #We are just interested in the first element(child)
                 $this->{$tagNameAndProperty} = new $ClassFQN();
@@ -114,7 +116,7 @@ class XmlModel {
                     $this->{$tagNameAndProperty}->parseAttributes($nodeList->item(0));
                     $this->{$tagNameAndProperty}->parseChildren($deep,$tagNameAndProperty);
 
-                    $this->onEveryNode($nodeList->item(0));//new function
+                    $this->onEveryNode($nodeList->item(0),$tagNameAndProperty);//new function
                 }
                 
             }
@@ -135,4 +137,14 @@ class XmlModel {
 
     }
 
+
+    /**
+     * Verifies wether the propertie  _xpath has a valueundocumented variable
+     *
+     * @return  bool
+     */ 
+    public function hasXpath():bool
+    {
+        return !empty($this->_xpath);
+    }
 }
