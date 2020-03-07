@@ -35,26 +35,17 @@ class XmlModel {
     }
     public static function parseFromArray(DOMElement $node,$object, array $attributes){
         foreach ($attributes as $key =>$property) {
-            if(\in_array($property,['_hidden','_xpath','attributes','noAttributes','children','node'])){
+            if(self::isInArray($property)){
                 continue;
             }
             //if the key is numeric use the $property as name for property and attribute
-            if(\is_numeric($key)){
-                if($node->hasAttribute($property)){
-                    $object->{$property} =$node->getAttribute($property);
-                }
-            }else{
-                //use the key  as attribute name
-                if($node->hasAttribute($key)){
-                    $object->{$property} =$node->getAttribute($key);
-                }
-            }           
+            $attributeName=\is_numeric($key)?$property:$key;
+            if($node->hasAttribute($attributeName)){
+                $object->{$property} =$node->getAttribute($attributeName);
+            }      
         }
     }
-    public function parseAttributes(DOMElement $node){
-        if($this->noAttributes==true){
-            return;
-        }
+    public function getAttributes(){
         $attributes=[];
         #si esta vacio attributes tomara las propiedades de clase
         if(empty($this->attributes)||count($this->attributes)==0){
@@ -62,6 +53,14 @@ class XmlModel {
         }else{
             $attributes=$this->attributes;
         }
+        return $attributes;
+    }
+    public function parseAttributes(DOMElement $node){
+        if($this->noAttributes==true){
+            return;
+        }
+       
+        $attributes=$this->getAttributes();
         //note, when there is at least one element with associative key on an array, then the other elements became index based on elements
         //with numeric index. 
         // By the other hand, when we use a simple array with key=>$value expresion, $key is a numeric index, so the next code  applies for both cases
@@ -161,5 +160,31 @@ class XmlModel {
     public function hasXpath():bool
     {
         return !empty($this->_xpath);
+    }
+    public static function isInArray($property){
+        return \in_array($property,['_hidden','_xpath','attributes','noAttributes','children','node']);
+    }
+
+    public function createNode(string $name){
+        if($this->node){
+            if($this->noAttributes==true){
+                return;
+            }
+            $attributes=$this->getAttributes();
+        }
+    }
+   
+    /**
+     * This function receives and object and a node , and populates the $node with the properties defined in the object
+     */
+    public static function populateWithAttributes(DOMElement $node,$object, array $attributes){
+        foreach ($attributes as $key =>$property) {
+            if(self::isInArray($property)){
+                continue;
+            }
+            //if the key is numeric use the $property as name for property and attributes
+            $attributeName=\is_numeric($key)?$property:$key;
+            $node->setAttribute($attributeName, $object->{$property});                      
+        }
     }
 }
