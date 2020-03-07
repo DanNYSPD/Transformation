@@ -215,7 +215,9 @@ class XmlModel {
                    foreach ($this->{$propertyName} as $object) {                     
                      $node= $this->domDocument->createElement($tagName);    
                      //as we create the node here, we passed it to the object
+                        $object->setDomDocument($this->domDocument);
                         $object->setNode($node);                                       
+                        
                         $object->createNodeAndPopulate();
                         $this->node->appendChild($node);
                    }
