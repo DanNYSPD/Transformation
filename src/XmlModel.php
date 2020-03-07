@@ -68,8 +68,11 @@ class XmlModel {
         //\var_dump($this->_xpath);
         $this->parsedAttributes($node,$this->_xpath);
     }
+    public function hasChildren():bool{
+        return !empty($this->children)&&!count($this->children)==0;
+    }
     public function parseChildren(bool $deep=false){
-        if(empty($this->children)||count($this->children)==0){
+        if(!$this->hasChildren()){
             return false;
         }
         if(null==$this->node){
@@ -166,14 +169,26 @@ class XmlModel {
     }
 
     public function createNode(string $name){
-        if($this->node){
-            if($this->noAttributes==true){
-                return;
-            }
-            $attributes=$this->getAttributes();
+        if(!$this->node){
+            $this->node=$this->domDocument->createElement($name);
         }
+        
+        $attributes=$this->getAttributes();
+        
+        self::populateWithAttributes($node,$this,$attributes);
+        //Now I will create the children nodes:
+
+        if(!$this->hasChildren()){
+            return;
+        }
+        //if this object has children then create it's subnodes (children nodes)
     }
-   
+    /**
+     * Undocumented variable
+     *
+     * @var DOMDocument
+     */
+   protected $domDocument;
     /**
      * This function receives and object and a node , and populates the $node with the properties defined in the object
      */
