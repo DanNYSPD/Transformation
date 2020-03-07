@@ -72,7 +72,7 @@ class XmlModel {
         return !empty($this->children)&&!count($this->children)==0;
     }
     /**
-     * Resolves the tagName and the property when the declaration defines a list
+     * Resolves the tagName and the property when the declaration defines a list, that is, the property is an array 
      *
      * @param string $tagNameAndProperty
      * @param integer $pos
@@ -87,6 +87,23 @@ class XmlModel {
         if($posPipe>0 &&($len=\strlen($tagNameAndProperty))!=$pos){
             $tagName=\substr($tagNameAndProperty,$posPipe+1,$len-$posPipe);
             $propertyName=\substr($tagNameAndProperty,0,$pos);
+        }else{
+            $tagName=$tagNameAndProperty;
+            $propertyName=$tagNameAndProperty;
+        }
+        return [$tagName,$propertyName];
+    }
+    /**
+     * This function resolve the tagName and property when the prperty is an object, that is when it's a single child
+     *
+     * @param string $tagNameAndProperty
+     * @return void
+     */
+    protected function resolveTagNameAndPropertyWhenItsASingleChild($tagNameAndProperty){
+        $tagName;
+        $propertyName;
+        if(($pos=\strpos($tagNameAndProperty,'|'))!==false){
+            list($propertyName,$tagName)=explode('|',$tagNameAndProperty);
         }else{
             $tagName=$tagNameAndProperty;
             $propertyName=$tagNameAndProperty;
@@ -124,18 +141,8 @@ class XmlModel {
                    }
                 #return true;
             }else{
-                #We are just interested in the first element(child)
-                $tagName;
-                $propertyName;
-                if(($pos=\strpos($tagNameAndProperty,'|'))!==false){
-                    list($propertyName,$tagName)=explode('|',$tagNameAndProperty);
-                }else{
-                    $tagName=$tagNameAndProperty;
-                    $propertyName=$tagNameAndProperty;
-                }
-                
-                
-
+                #We are just interested in the first element(child)                
+                [$tagName,$propertyName]=$this->resolveTagNameAndPropertyWhenItsASingleChild($tagNameAndProperty);
                 $this->{$propertyName} = new $ClassFQN();
                 $nodeList=  $this->node->getElementsByTagName($tagName);                
                 if($nodeList->length>0){
