@@ -184,21 +184,45 @@ class XmlModel {
     public static function isInArray($property){
         return \in_array($property,['_hidden','_xpath','attributes','noAttributes','children','node']);
     }
+    public static function isInChildren($property){
+        //return \in_array($property,$this)
+    }
 
-    public function createNode(string $name){
+    public function createNodeAndPopulate(?string $name){
         if(!$this->node){
             $this->node=$this->domDocument->createElement($name);
         }
         
         $attributes=$this->getAttributes();
         
-        self::populateWithAttributes($node,$this,$attributes);
+        self::populateWithAttributes($this->node,$this,$attributes);
         //Now I will create the children nodes:
 
         if(!$this->hasChildren()){
             return;
         }
         //if this object has children then create it's subnodes (children nodes)
+        foreach ($this->children as $tagNameAndProperty=>$ClassFQN) {
+            //list($tagNameAndProperty,$ClassFQN)=$childDefinition;
+           
+            if(($pos=\strpos($tagNameAndProperty,'*'))!==false){
+                //we deal with the whole list
+                 [$tagName,$propertyName]=$this->resolveTagNameAndPropertyWhenItsAList($tagNameAndProperty,$pos);
+                  $nodeList=  $this->node->getElementsByTagName($tagName);
+                  //in this case the property is an array of objects
+                   foreach ($this->{$propertyName} as $object) {                     
+                     $node= $this->domDocument->createElement($tagName);    
+                     //as we create the node here, we passed it to the object
+                        $object->setNode($node);                                       
+                        $object->createNodeAndPopulate();
+                   }
+                #return true;
+            }else{
+               
+            }
+           
+        }
+        return $this->node;
     }
     /**
      * Undocumented variable
@@ -216,7 +240,39 @@ class XmlModel {
             }
             //if the key is numeric use the $property as name for property and attributes
             $attributeName=\is_numeric($key)?$property:$key;
+            if(!\is_scalar($object->{$property})){
+                echo "please define the properties array or a scalar vale {$property} is not scalar";
+            }
             $node->setAttribute($attributeName, $object->{$property});                      
         }
+        
     }
+
+    /**
+     * Set undocumented variable
+     *
+     * @param  DOMElement  $node  Undocumented variable
+     *
+     * @return  self
+     */
+    public function setNode(DOMElement $node)
+    {
+        $this->node = $node;
+
+        return $this;
+    }
+
+   /**
+    * Set undocumented variable
+    *
+    * @param  DOMDocument  $domDocument  Undocumented variable
+    *
+    * @return  self
+    */
+   public function setDomDocument(DOMDocument $domDocument)
+   {
+      $this->domDocument = $domDocument;
+
+      return $this;
+   }
 }
