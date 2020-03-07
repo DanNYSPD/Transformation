@@ -2,8 +2,9 @@
 
 use Lindan\Tranformation\XmlModel\XmlModel;
 
-class Race extends XmlModel {
- public $name;
+class Specie extends XmlModel{
  
+    public $specieName;
+
 
 }
