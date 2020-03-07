@@ -6,6 +6,7 @@ use DOMXPath;
 use DOMElement;
 use DOMDocument;
 use RuntimeException;
+use InvalidArgumentException;
 /**
  * @author Daniel J Hdz <daniel.hernandez.job@gmail.com>
  * 
@@ -224,11 +225,19 @@ class XmlModel {
                 #return true;
             }else{
                 [$tagName,$propertyName]=$this->resolveTagNameAndPropertyWhenItsASingleChild($tagNameAndProperty);
-                $newNode=$this->domDocument->createElement($tagName);
-                $this->{$propertyName}->setNode($newNode);
-                $this->{$propertyName}->setNode($newNode);
-                $this->{$propertyName}->createNodeAndPopulate();
-                $this->node->appendChild($newNode);
+                #The rule is, only if it's different from null, it will be created.
+                if($this->{$propertyName}!==null){
+                    $newNode=$this->domDocument->createElement($tagName);
+                    if( $this->{$propertyName} instanceof XmlModel){
+                        
+                        $this->{$propertyName}->setDomDocument($this->domDocument);
+                        $this->{$propertyName}->setNode($newNode);
+                        $this->{$propertyName}->createNodeAndPopulate();
+                        $this->node->appendChild($newNode);
+                    }else {
+                        throw new InvalidArgumentException("The property: {$propertyName} doesn't implement the XmlModel");
+                    }
+                }
             }
            
         }
