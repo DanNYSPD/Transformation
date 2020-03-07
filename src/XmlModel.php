@@ -71,6 +71,28 @@ class XmlModel {
     public function hasChildren():bool{
         return !empty($this->children)&&!count($this->children)==0;
     }
+    /**
+     * Resolves the tagName and the property when the declaration defines a list
+     *
+     * @param string $tagNameAndProperty
+     * @param integer $pos
+     * @return array
+     */
+    protected function resolveTagNameAndPropertyWhenItsAList(string $tagNameAndProperty,int $pos){
+        $tagName;
+        $propertyName;
+        $posPipe=\strpos($tagNameAndProperty,'|');
+        #es un array
+        #obtenemos el nombre del tag (puede ser explicito despues de un| , o implicito, no coloclando nada y asumiendo que el nombre de la propiedad)
+        if($posPipe>0 &&($len=\strlen($tagNameAndProperty))!=$pos){
+            $tagName=\substr($tagNameAndProperty,$posPipe+1,$len-$posPipe);
+            $propertyName=\substr($tagNameAndProperty,0,$pos);
+        }else{
+            $tagName=$tagNameAndProperty;
+            $propertyName=$tagNameAndProperty;
+        }
+        return [$tagName,$propertyName];
+    }
     public function parseChildren(bool $deep=false){
         if(!$this->hasChildren()){
             return false;
@@ -82,20 +104,8 @@ class XmlModel {
             //list($tagNameAndProperty,$ClassFQN)=$childDefinition;
            
             if(($pos=\strpos($tagNameAndProperty,'*'))!==false){
-                $tagName;
-                $propertyName;
-                $posPipe=\strpos($tagNameAndProperty,'|');
-                #es un array
-                #obtenemos el nombre del tag (puede ser explicito despues de un| , o implicito, no coloclando nada y asumiendo que el nombre de la propiedad)
-                if($posPipe>0 &&($len=\strlen($tagNameAndProperty))!=$pos){
-                    $tagName=\substr($tagNameAndProperty,$posPipe+1,$len-$posPipe);
-                    $propertyName=\substr($tagNameAndProperty,0,$pos);
-                }else{
-                    $tagName=$tagNameAndProperty;
-                    $propertyName=$tagNameAndProperty;
-                }
-
-               
+                //we deal with the whole list
+                 [$tagName,$propertyName]=$this->resolveTagNameAndPropertyWhenItsAList($tagNameAndProperty,$pos);
                   $nodeList=  $this->node->getElementsByTagName($tagName);
                    foreach ($nodeList as $node) {
                       $element=  new $ClassFQN();
