@@ -182,13 +182,13 @@ class XmlModel {
         return !empty($this->_xpath);
     }
     public static function isInArray($property){
-        return \in_array($property,['_hidden','_xpath','attributes','noAttributes','children','node']);
+        return \in_array($property,['_hidden','_xpath','attributes','noAttributes','children','node',"_hideXmlAttributes"]);
     }
     public static function isInChildren($property){
         //return \in_array($property,$this)
     }
 
-    public function createNodeAndPopulate(?string $name){
+    public function createNodeAndPopulate(?string $name=''){
         if(!$this->node){
             $this->node=$this->domDocument->createElement($name);
         }
@@ -208,17 +208,27 @@ class XmlModel {
             if(($pos=\strpos($tagNameAndProperty,'*'))!==false){
                 //we deal with the whole list
                  [$tagName,$propertyName]=$this->resolveTagNameAndPropertyWhenItsAList($tagNameAndProperty,$pos);
-                  $nodeList=  $this->node->getElementsByTagName($tagName);
-                  //in this case the property is an array of objects
+
+                   //in this case the property is an array of objects
+                  if(is_array($this->{$propertyName})){
                    foreach ($this->{$propertyName} as $object) {                     
                      $node= $this->domDocument->createElement($tagName);    
                      //as we create the node here, we passed it to the object
                         $object->setNode($node);                                       
                         $object->createNodeAndPopulate();
+                        $this->node->appendChild($node);
                    }
+                }else{
+                    #\var_dump($this->{$propertyName});
+                }
                 #return true;
             }else{
-               
+                [$tagName,$propertyName]=$this->resolveTagNameAndPropertyWhenItsASingleChild($tagNameAndProperty);
+                $newNode=$this->domDocument->createElement($tagName);
+                $this->{$propertyName}->setNode($newNode);
+                $this->{$propertyName}->setNode($newNode);
+                $this->{$propertyName}->createNodeAndPopulate();
+                $this->node->appendChild($newNode);
             }
            
         }
@@ -234,14 +244,17 @@ class XmlModel {
      * This function receives and object and a node , and populates the $node with the properties defined in the object
      */
     public static function populateWithAttributes(DOMElement $node,$object, array $attributes){
+        #\var_dump($attributes);
         foreach ($attributes as $key =>$property) {
+            #echo $property;
             if(self::isInArray($property)){
                 continue;
             }
             //if the key is numeric use the $property as name for property and attributes
             $attributeName=\is_numeric($key)?$property:$key;
             if(!\is_scalar($object->{$property})){
-                echo "please define the properties array or a scalar vale {$property} is not scalar";
+                #echo "please define the properties array or a scalar vale {$property} is not scalar";
+                continue;
             }
             $node->setAttribute($attributeName, $object->{$property});                      
         }

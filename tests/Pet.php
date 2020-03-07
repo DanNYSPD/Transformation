@@ -1,6 +1,6 @@
 <?php
 
-use Race;
+
 use Lindan\Tranformation\XmlModel\XmlModel;
 use Lindan\Tranformation\XmlModel\XmlModelSerializer;
 

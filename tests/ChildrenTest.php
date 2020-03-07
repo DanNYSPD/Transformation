@@ -1,5 +1,5 @@
 <?php
-use Pet;
+
 use PHPUnit\Framework\TestCase;
 
 final class ChildrenTest extends TestCase {

@@ -1,10 +1,9 @@
 <?php
 
-use Characteristic;
 use Lindan\Tranformation\XmlModel\XmlModelSerializer;
 
 class Characteristics extends XmlModelSerializer {
-    public $random;
+    public $random="a";
 
 
     public $children=[
