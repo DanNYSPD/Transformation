@@ -13,6 +13,11 @@ use InvalidArgumentException;
  * 
  */
 class XmlModel {
+    /**
+     * This property indicates wheter the model has or not attributes(because an empty attributes array indicates that properties must be taken as attributes )
+     *
+     * @var boolean
+     */
     public $noAttributes=false;
     public $attributes=[];
 
@@ -196,8 +201,10 @@ class XmlModel {
         }
         
         $attributes=$this->getAttributes();
+        if($this->noAttributes!==true){
+            self::populateWithAttributes($this->node,$this,$attributes);
+        }
         
-        self::populateWithAttributes($this->node,$this,$attributes);
         //Now I will create the children nodes:
 
         if(!$this->hasChildren()){
