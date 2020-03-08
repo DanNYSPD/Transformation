@@ -7,6 +7,7 @@ use DOMElement;
 use DOMDocument;
 use RuntimeException;
 use InvalidArgumentException;
+
 /**
  * @author Daniel J Hdz <daniel.hernandez.job@gmail.com>
  * 
@@ -230,8 +231,17 @@ class XmlModel {
                 #The rule is, only if it's different from null, it will be created.
                 if($this->{$propertyName}!==null){
                     $newNode=$this->domDocument->createElement($tagName);
-                    if( $this->{$propertyName} instanceof XmlModel){
+                    if(
+                        /*
+                         $this->{$propertyName} instanceof XmlModel ||
+                        $this->{$propertyName} instanceof self ||
+                        $this->{$property} instanceof XmlModelSerializer
+                        */
+                        \method_exists($this->{$propertyName},'setDomDocument')&&
+                        \method_exists($this->{$propertyName},'setNode')&&
+                        \method_exists($this->{$propertyName},'createNodeAndPopulate')
                         
+                        ){
                         $this->{$propertyName}->setDomDocument($this->domDocument);
                         $this->{$propertyName}->setNode($newNode);
                         $this->{$propertyName}->createNodeAndPopulate();

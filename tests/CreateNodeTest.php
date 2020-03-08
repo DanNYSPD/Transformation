@@ -16,7 +16,7 @@ final class CreateNodeTest extends TestCase {
        $breed=new Breed();
        $breed->bahevior="hoa";
        $breed->specie= new Specie();
-        $cm->breed= $breed;
+       $cm->breed= $breed;
        $cm->setDomDocument($dom);
        $c= new Characteristic();
        $c->name="1";
