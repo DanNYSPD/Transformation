@@ -37,10 +37,16 @@ class XmlModel {
      * @var DOMXPath
      */
     public $_xpath=null;
+    /**
+     * sets whether we must trim all node values when retrieving values.
+     * by default this trims the values
+     */
+    public $_autoTrimAll=true;
+
     public function setXpath(?DOMXPath $xpath){
         $this->_xpath=$xpath;
     }
-    public static function parseFromArray(DOMElement $node,$object, array $attributes){
+    public static function parseFromArray(DOMElement $node,$object, array $attributes,bool $autoTrimAll=true){
         foreach ($attributes as $key =>$property) {
             if(self::isInArray($property)){
                 continue;
@@ -48,7 +54,14 @@ class XmlModel {
             //if the key is numeric use the $property as name for property and attribute
             $attributeName=\is_numeric($key)?$property:$key;
             if($node->hasAttribute($attributeName)){
-                $object->{$property} =$node->getAttribute($attributeName);
+                    if ($autoTrimAll==true) {
+                        echo "a";
+                        $object->{$property} =trim($node->getAttribute($attributeName));
+                    }else {
+                        $object->{$property} =$node->getAttribute($attributeName);
+                        echo "a";
+                    }   
+                
             }      
         }
     }
@@ -71,7 +84,7 @@ class XmlModel {
         //note, when there is at least one element with associative key on an array, then the other elements became index based on elements
         //with numeric index. 
         // By the other hand, when we use a simple array with key=>$value expresion, $key is a numeric index, so the next code  applies for both cases
-        self::parseFromArray($node,$this,$attributes);
+        self::parseFromArray($node,$this,$attributes,$this->_autoTrimAll);
         //\var_dump($this->_xpath);
         $this->parsedAttributes($node,$this->_xpath);
     }
