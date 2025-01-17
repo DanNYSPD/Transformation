@@ -195,9 +195,15 @@ class XmlModel {
         //return \in_array($property,$this)
     }
 
-    public function createNodeAndPopulate(?string $name=''){
+    public function createNodeAndPopulate(?string $name='',?string $ns=null){
         if(!$this->node){
-            $this->node=$this->domDocument->createElement($name);
+            if (!$ns){
+                $this->node=$this->domDocument->createElement($name);
+
+            }else{
+                $this->node=$this->domDocument->createElementNS($ns,$name);
+
+            }
         }
         
         $attributes=$this->getAttributes();
